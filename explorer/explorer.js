@@ -8257,9 +8257,17 @@ var _elm_lang$html$Html_Events$Options = F2(
 	});
 
 var _user$project$Explorer$initialInput = '<!-- @block-start type:header -->\n<p>First Paragraph</p>\n<!-- @block-end -->\n\n<!-- @block-start type:main -->\n\n<!-- just a comment -->\n<p contentEditable class=\"test\">Paragraph with a <a href=\"wordpress.com\">link</a> in it.</p>\n\n<!-- @block-start type:aside -->\nThis is a nested aside.\n\n<!-- @block-start type:profile user:hunter02-->\n<!-- @block-end -->\n\n<!-- @block-end -->\n\n<!-- @block-end -->';
-var _user$project$Explorer$statusMessage = function (status) {
+var _user$project$Explorer$colorFromStatus = function (status) {
 	var _p0 = status;
 	if (_p0.ctor === 'ParseGood') {
+		return 'black';
+	} else {
+		return '#ddd';
+	}
+};
+var _user$project$Explorer$statusMessage = function (status) {
+	var _p1 = status;
+	if (_p1.ctor === 'ParseGood') {
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -8316,8 +8324,9 @@ var _user$project$Explorer$subscriptions = function (model) {
 var _user$project$Explorer$UpdateInput = function (a) {
 	return {ctor: 'UpdateInput', _0: a};
 };
-var _user$project$Explorer$view = function (_p1) {
-	var _p2 = _p1;
+var _user$project$Explorer$view = function (_p2) {
+	var _p3 = _p2;
+	var _p4 = _p3.status;
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -8392,7 +8401,7 @@ var _user$project$Explorer$view = function (_p1) {
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(_p2.input),
+							_0: _elm_lang$html$Html$text(_p3.input),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
@@ -8418,7 +8427,7 @@ var _user$project$Explorer$view = function (_p1) {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _user$project$Explorer$statusMessage(_p2.status),
+								_0: _user$project$Explorer$statusMessage(_p4),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -8431,13 +8440,21 @@ var _user$project$Explorer$view = function (_p1) {
 										{
 											ctor: '::',
 											_0: {ctor: '_Tuple2', _0: 'padding', _1: '1em'},
-											_1: {ctor: '[]'}
+											_1: {
+												ctor: '::',
+												_0: {
+													ctor: '_Tuple2',
+													_0: 'color',
+													_1: _user$project$Explorer$colorFromStatus(_p4)
+												},
+												_1: {ctor: '[]'}
+											}
 										}),
 									_1: {ctor: '[]'}
 								},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text(_p2.parse),
+									_0: _elm_lang$html$Html$text(_p3.parse),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
@@ -8451,26 +8468,36 @@ var _user$project$Explorer$ParseBad = {ctor: 'ParseBad'};
 var _user$project$Explorer$ParseGood = {ctor: 'ParseGood'};
 var _user$project$Explorer$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		if (_p3.ctor === 'UpdateInput') {
-			var _p4 = _p3._0;
+		var _p5 = msg;
+		if (_p5.ctor === 'UpdateInput') {
+			var _p6 = _p5._0;
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{input: _p4, status: _user$project$Explorer$ParseBad}),
-				_1: _user$project$Explorer$submitPost(_p4)
+					{input: _p6, status: _user$project$Explorer$ParseBad}),
+				_1: _user$project$Explorer$submitPost(_p6)
 			};
 		} else {
-			var _p5 = _p3._0;
-			var status = _elm_lang$core$Native_Utils.eq(_p5, '') ? _user$project$Explorer$ParseBad : _user$project$Explorer$ParseGood;
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{parse: _p5, status: status}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
+			var _p8 = _p5._0;
+			var _p7 = _p8;
+			if (_p7 === '') {
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{status: _user$project$Explorer$ParseBad}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			} else {
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{parse: _p8, status: _user$project$Explorer$ParseGood}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			}
 		}
 	});
 var _user$project$Explorer$main = _elm_lang$html$Html$program(

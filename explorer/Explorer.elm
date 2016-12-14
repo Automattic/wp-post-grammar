@@ -40,19 +40,12 @@ update msg model =
             )
 
         ReceiveParse parse ->
-            let
-                status =
-                    if parse == "" then
-                        ParseBad
-                    else
-                        ParseGood
-            in
-                ( { model
-                    | parse = parse
-                    , status = status
-                  }
-                , Cmd.none
-                )
+            case parse of
+                "" ->
+                    ( { model | status = ParseBad }, Cmd.none )
+
+                _ ->
+                    ( { model | parse = parse, status = ParseGood }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -68,6 +61,16 @@ statusMessage status =
 
         ParseBad ->
             div [ style [ ( "color", "red" ) ] ] [ text "No valid parse" ]
+
+
+colorFromStatus : ParseStatus -> String
+colorFromStatus status =
+    case status of
+        ParseGood ->
+            "black"
+
+        ParseBad ->
+            "#ddd"
 
 
 view : Model -> Html.Html Msg
@@ -106,6 +109,7 @@ view { input, parse, status } =
             , pre
                 [ style
                     [ ( "padding", "1em" )
+                    , ( "color", colorFromStatus status )
                     ]
                 ]
                 [ text parse ]
