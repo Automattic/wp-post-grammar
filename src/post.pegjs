@@ -2,16 +2,11 @@ Document
   = Token*
   
 Token
-  = s:WP_Block_Start ts:(!WP_Block_End t:Token { return t })+ e:WP_Block_End
-  { return {
-    type: 'WP_Block',
-    attrs: s.attrs,
-    startText: s.text,
-    endText: e.text,
-    children: ts
-  } }
+  = WP_Block_Balanced
+  / WP_Block_Start
+  / WP_Block_End
   / HTML_Comment
-  / HTML_Balanced_Tag
+  / HTML_Tag_Balanced
   / HTML_Tag_Open
   / HTML_Tag_Close
   / ts:HTML_Text+ 
@@ -22,9 +17,19 @@ Token
   
 HTML_Text
   = [a-zA-Z0-9,.:;'"`()\[\] \t\r\n/\\!]
+
+WP_Block_Balanced
+  = s:WP_Block_Start ts:(!WP_Block_End t:Token { return t })+ e:WP_Block_End
+  { return {
+    type: 'WP_Block',
+    attrs: s.attrs,
+    startText: s.text,
+    endText: e.text,
+    children: ts
+  } }
   
 WP_Block_Start
-  = "<!--" __ "@block-start" attrs:WP_Block_Attribute_List? _? "-->"
+  = "<!--" __ "@block-start" attrs:WP_Block_Attribute_List _? "-->"
   { return {
     type: 'WP_Block_Start',
     attrs,
@@ -39,7 +44,7 @@ WP_Block_End
   } }
  
 WP_Block_Attribute_List
-  = as:(_+ attr:WP_Block_Attribute { return attr })+
+  = as:(_+ attr:WP_Block_Attribute { return attr })*
   { return as.reduce( ( attrs, [ name, value ] ) => Object.assign(
     attrs,
     { [ name ]: value }
@@ -65,7 +70,7 @@ HTML_Comment
     text: text()
   } }
   
-HTML_Balanced_Tag
+HTML_Tag_Balanced
   = s:HTML_Tag_Open ts:(!HTML_Tag_Close t:Token { return t})+ e:HTML_Tag_Close
   { return {
     type: 'HTML_Tag',
@@ -77,7 +82,7 @@ HTML_Balanced_Tag
   } }
   
 HTML_Tag_Open
-  = "<" name:HTML_Tag_Name attrs:HTML_Attribute_List? _* ">"
+  = "<" name:HTML_Tag_Name attrs:HTML_Attribute_List _* ">"
   { return {
     type: 'HTML_Tag_Open',
     name,
@@ -102,7 +107,7 @@ HTML_Tag_Name_Character
   / ASCII_Digit
   
 HTML_Attribute_List
-  = as:(_+ a:HTML_Attribute_Item { return a })+
+  = as:(_+ a:HTML_Attribute_Item { return a })*
   { return as.reduce( ( attrs, [ name, value ] ) => Object.assign(
     attrs,
     { [ name ]: value }

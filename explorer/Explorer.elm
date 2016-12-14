@@ -131,7 +131,8 @@ main =
 
 initialInput : String
 initialInput =
-    """<!-- @block-start type:header -->
+    """<!-- @block-start not:complete -->
+<!-- @block-start type:header -->
 <p class="frist-post">First <em>Paragraph</em></p>
 <!-- @block-end -->
 
