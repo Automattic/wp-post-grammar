@@ -1,14 +1,24 @@
 <html>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<style>
+.nohighlight * {
+    color: #ddd;
+}
+</style>
 <body>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
 <script src="./post-parser.js"></script>
 <script src="./explorer.js"></script>
 <script>
 var app = Elm.Explorer.fullscreen();
 var parse = postParser.parse;
+hljs.configure( { useBR: true } );
 
 app.ports.submitPost.subscribe( function( input ) {
     try {
-        app.ports.receiveParse.send( JSON.stringify( parse( input ), null, 4 ) );
+        var json = JSON.stringify( parse( input ), null, 2 );
+        var html = hljs.highlight( 'json', json );
+        app.ports.receiveParse.send( html.value );
     } catch (e) {
         app.ports.receiveParse.send( '' );
     }

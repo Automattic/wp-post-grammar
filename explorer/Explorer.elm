@@ -1,7 +1,8 @@
 port module Explorer exposing (..)
 
-import Html exposing (div, pre, text, textarea)
-import Html.Attributes exposing (style)
+import Html exposing (code, div, pre, text, textarea)
+import Html.Attributes exposing (class, style)
+import Html.Attributes.Extra exposing (innerHtml)
 import Html.Events exposing (onInput)
 
 
@@ -63,14 +64,14 @@ statusMessage status =
             div [ style [ ( "color", "red" ) ] ] [ text "No valid parse" ]
 
 
-colorFromStatus : ParseStatus -> String
-colorFromStatus status =
+highlightClass : ParseStatus -> String
+highlightClass status =
     case status of
         ParseGood ->
-            "black"
+            ""
 
         ParseBad ->
-            "#ddd"
+            "nohighlight"
 
 
 view : Model -> Html.Html Msg
@@ -86,6 +87,7 @@ view { input, parse, status } =
         [ div
             [ style
                 [ ( "flex", "1 0 0" )
+                , ( "min-width", "50%" )
                 ]
             ]
             [ textarea
@@ -107,12 +109,12 @@ view { input, parse, status } =
             ]
             [ div [] [ statusMessage status ]
             , pre
-                [ style
+                [ class <| highlightClass status
+                , style
                     [ ( "padding", "1em" )
-                    , ( "color", colorFromStatus status )
                     ]
                 ]
-                [ text parse ]
+                [ code [ innerHtml parse ] [] ]
             ]
         ]
 
