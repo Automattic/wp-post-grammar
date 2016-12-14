@@ -1,0 +1,18 @@
+<html>
+<body>
+<script src="../post-parser.js"></script>
+<script src="./explorer.js"></script>
+<script>
+var app = Elm.Explorer.fullscreen();
+var parse = postParser.parse;
+
+app.ports.submitPost.subscribe( function( input ) {
+    try {
+        app.ports.receiveParse.send( JSON.stringify( parse( input ), null, 4 ) );
+    } catch (e) {
+        app.ports.receiveParse.send( '' );
+    }
+} );
+</script>
+</body>
+</html

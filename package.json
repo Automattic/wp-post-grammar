@@ -1,0 +1,24 @@
+{
+  "name": "wordpress-post-grammar",
+  "version": "0.1.0",
+  "description": "PEG.js grammar for WordPress posts including new theming designs",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "pegjs ./post-parser.js ./src/post.pegjs",
+    "build:explorer-parser": "pegjs --export-var postParser --format globals -o ./explorer/post-parser.js ./src/post.pegjs",
+    "build:explorer-elm": "elm-make explorer/Explorer.elm --output explorer/explorer.js",
+    "build:explorer": "npm run build:explorer-parser && npm run build:explorer-elm",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "WordPress",
+    "Grammar",
+    "PEGjs",
+    "parser"
+  ],
+  "author": "Dennis Snell <dennis.snell@automattic.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "pegjs": "0.10.0"
+  }
+}
