@@ -193,6 +193,7 @@
         peg$c26 = function(s, ts, e) { return {
             type: 'HTML_Tag',
             name: s.name,
+            attrs: s.attrs,
             startText: s.text,
             endText: e.text,
             children: ts

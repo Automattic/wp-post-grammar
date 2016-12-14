@@ -8300,7 +8300,7 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Explorer$initialInput = '<!-- @block-start type:header -->\n<p>First Paragraph</p>\n<!-- @block-end -->\n\n<!-- @block-start type:main -->\n\n<!-- just a comment -->\n<p contentEditable class=\"test\">Paragraph with a <a href=\"wordpress.com\">link</a> in it.</p>\n\n<!-- @block-start type:aside -->\nThis is a nested aside.\n\n<!-- @block-start type:profile user:hunter02-->\n<!-- @block-end -->\n\n<!-- @block-end -->\n\n<!-- @block-end -->';
+var _user$project$Explorer$initialInput = '<!-- @block-start type:header -->\n<p class=\"frist-post\">First <em>Paragraph</em></p>\n<!-- @block-end -->\n\n<!-- @block-start type:main -->\n\n<!-- just a comment -->\n<p contentEditable class=\"test\">Paragraph with a <a href=\"wordpress.com\">link</a> in it.</p>\n\n<!-- @block-start type:aside -->\nThis is a nested aside.\n\n<!-- @block-start type:profile user:hunter02-->\n<!-- @block-end -->\n\n<!-- @block-end -->\n\n<!-- @block-end -->';
 var _user$project$Explorer$highlightClass = function (status) {
 	var _p0 = status;
 	if (_p0.ctor === 'ParseGood') {

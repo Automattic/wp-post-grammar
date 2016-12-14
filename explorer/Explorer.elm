@@ -132,7 +132,7 @@ main =
 initialInput : String
 initialInput =
     """<!-- @block-start type:header -->
-<p>First Paragraph</p>
+<p class="frist-post">First <em>Paragraph</em></p>
 <!-- @block-end -->
 
 <!-- @block-start type:main -->
