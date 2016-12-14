@@ -4,7 +4,7 @@
   "description": "PEG.js grammar for WordPress posts including new theming designs",
   "main": "index.js",
   "scripts": {
-    "postinstall": "pegjs ./post-parser.js ./src/post.pegjs",
+    "postinstall": "pegjs -o ./post-parser.js ./src/post.pegjs",
     "build:explorer-parser": "pegjs --export-var postParser --format globals -o ./explorer/post-parser.js ./src/post.pegjs",
     "build:explorer-elm": "elm-make explorer/Explorer.elm --output explorer/explorer.js",
     "build:explorer": "npm run build:explorer-parser && npm run build:explorer-elm",
