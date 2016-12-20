@@ -16,12 +16,13 @@ Token
   } }
   
 HTML_Text
-  = [a-zA-Z0-9,.:;'"`()\[\] \t\r\n/\\!]
+  = [^<]
 
 WP_Block_Balanced
   = s:WP_Block_Start ts:(!WP_Block_End t:Token { return t })+ e:WP_Block_End
   { return {
     type: 'WP_Block',
+    blockType: s.blockType,
     attrs: s.attrs,
     startText: s.text,
     endText: e.text,
@@ -29,19 +30,24 @@ WP_Block_Balanced
   } }
   
 WP_Block_Start
-  = "<!--" __ "@block-start" attrs:WP_Block_Attribute_List _? "-->"
+  = "<!--" __ "wp:" blockType:WP_Block_Type attrs:WP_Block_Attribute_List _? "-->"
   { return {
     type: 'WP_Block_Start',
+    blockType,
     attrs,
     text: text()
   } }
   
 WP_Block_End
-  = "<!--" __ "@block-end" __ "-->"
+  = "<!--" __ "/wp" __ "-->"
   { return {
     type: 'WP_Block_End',
     text: text()
   } }
+
+WP_Block_Type
+  = head:ASCII_Letter tail:ASCII_AlphaNumeric*
+  { return [ head ].concat( tail ).join('')  }
  
 WP_Block_Attribute_List
   = as:(_+ attr:WP_Block_Attribute { return attr })*
@@ -71,7 +77,7 @@ HTML_Comment
   } }
   
 HTML_Tag_Balanced
-  = s:HTML_Tag_Open ts:(!HTML_Tag_Close t:Token { return t})+ e:HTML_Tag_Close
+  = s:HTML_Tag_Open ts:(!HTML_Tag_Close t:Token { return t })+ e:HTML_Tag_Close
   { return {
     type: 'HTML_Tag',
     name: s.name,
@@ -127,9 +133,9 @@ HTML_Attribute_Unquoted
   { return [ name, value.join('') ] }
   
 HTML_Attribute_Quoted
-  = name:HTML_Attribute_Name _* "=" _* '"' value:(!'"' c:. { return c })+ '"'
+  = name:HTML_Attribute_Name _* "=" _* '"' value:(!'"' c:. { return c })* '"'
   { return [ name, value.join('') ] }
-  / name:HTML_Attribute_Name _* "=" _* "'" value:(!"'" c:. { return c })+ "'"
+  / name:HTML_Attribute_Name _* "=" _* "'" value:(!"'" c:. { return c })* "'"
   { return [ name, value.join('') ] }
   
 HTML_Attribute_Name

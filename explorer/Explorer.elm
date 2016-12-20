@@ -131,22 +131,58 @@ main =
 
 initialInput : String
 initialInput =
-    """<!-- @block-start not:complete -->
-<!-- @block-start type:header -->
-<p class="frist-post">First <em>Paragraph</em></p>
-<!-- @block-end -->
+    """<!-- wp:x y:z -->
+Content
+<!-- /wp -->
 
-<!-- @block-start type:main -->
+### Text
+<!-- wp:text -->
+The quick brown fox jumps over the lazy dog.
+<!-- /wp -->
 
-<!-- just a comment -->
-<p contentEditable class="test">Paragraph with a <a href="wordpress.com">link</a> in it.</p>
+<!-- wp:text -->
+<p>The quick brown fox jumps over the lazy dog.</p>
+<!-- /wp -->
 
-<!-- @block-start type:aside -->
-This is a nested aside.
+<!-- wp:text -->
+<p style="text-align: right;">The quick brown fox jumps over the lazy dog.</p>
+<!-- /wp -->
 
-<!-- @block-start type:profile user:hunter02-->
-<!-- @block-end -->
+### Image
+<!-- wp:image -->
+<img class="" src="/">
+<!-- /wp -->
 
-<!-- @block-end -->
+<!-- wp:image -->
+<figure class="">
+  <img src="/">
+</figure>
+<!-- /wp -->
 
-<!-- @block-end -->"""
+### Image with caption
+<!-- wp:image -->
+[caption]<img src="/"> A picture is worth a thousand words.[/caption]
+<!-- /wp -->
+
+<!-- wp:image -->
+<figure>
+  <img src="/">
+  <figcaption>A picture is worth a thousand words.</figcaption>
+</figure>
+<!-- /wp -->
+
+### Quote
+<!-- wp:quote -->
+<blockquote>
+  <p>The quick brown fox jumps over the lazy dog.</p>
+  <footer>by Author</footer>
+</blockquote>
+<!-- /wp -->
+
+### HTML
+<!-- wp:html -->
+<div class="custom-stuff">
+  <canvas></canvas>
+  <p>Look, Ma, canvas!</p>
+</div>
+<!-- /wp -->"""
