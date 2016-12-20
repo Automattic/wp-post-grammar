@@ -2,7 +2,8 @@ Document
   = Token*
   
 Token
-  = WP_Block_Balanced
+  = WP_HTML_Block
+  / WP_Block_Balanced
   / WP_Block_Start
   / WP_Block_End
   / HTML_Comment
@@ -141,6 +142,20 @@ HTML_Attribute_Quoted
 HTML_Attribute_Name
   = cs:[a-zA-Z0-9:.]+
   { return cs.join('') }
+
+WP_HTML_Block
+  = WP_HTML_Block_Start inner:(!WP_Block_End c:Char { return c })+ WP_Block_End
+  { return {
+    type: 'WP_Block',
+    blockType: 'html',
+    innerHTML: inner.join('')
+  } }
+
+WP_HTML_Block_Start
+  = "<!--" __ "wp:html" _? "-->"
+
+Char
+  = .
 
 ASCII_AlphaNumeric
   = ASCII_Letter 
