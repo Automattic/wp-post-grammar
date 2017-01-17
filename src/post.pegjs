@@ -26,6 +26,7 @@ WP_Block_Balanced
     attrs: s.attrs,
     startText: s.text,
     endText: e.text,
+    rawContent: text(),
     children: ts
   } }
   
