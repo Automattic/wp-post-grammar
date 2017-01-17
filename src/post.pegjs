@@ -16,7 +16,8 @@ Token
   } }
   
 HTML_Text
-  = [^<]
+  = !("<" [a-zA-Z]) c:.
+  { return c }
 
 WP_Block_Balanced
   = s:WP_Block_Start ts:(!WP_Block_End t:Token { return t })+ e:WP_Block_End
