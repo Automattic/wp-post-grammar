@@ -1,5 +1,6 @@
 Document
-  = Token*
+  = ts:Token*
+  { return ts.filter(Boolean) }
   
 Token
   = WP_Block_Balanced
@@ -10,9 +11,10 @@ Token
   / HTML_Tag_Open
   / HTML_Tag_Close
   / ts:HTML_Text+ 
-  { return {
+  { var value = ts.join('').trim();
+    if (value) return {
     type: 'Text',
-    value: ts.join('') 
+    value: value
   } }
   
 HTML_Text
