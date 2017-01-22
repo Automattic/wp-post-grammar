@@ -1,0 +1,40 @@
+body {
+    overflow: hidden;
+}
+
+.wppgInputPane {
+    width: 95%;
+    height: 100%;
+    padding: 1em;
+    font-family: monospace;
+    font-size: 16px;
+}
+
+.wppgLayout {
+    display: flex;
+    flex-direction: row;
+    font-family: monospace;
+    font-size: 16px;
+}
+
+.wppgNoHighlight {
+    color: rgb(208, 208, 208);
+}
+
+.wppgNoHighlight  * {
+    color: rgb(208, 208, 208);
+}
+
+.wppgOutputPane {
+    height: 90%;
+    overflow: scroll;
+    padding: 1em;
+}
+
+.wppgParseBad {
+    color: rgb(200, 0, 0);
+}
+
+.wppgParseGood {
+    color: rgb(0, 128, 0);
+}

@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "pegjs -o ./post-parser.js ./src/post.pegjs",
+    "build:css": "elm-css explorer/Stylesheets.elm -o explorer/",
     "build:explorer-parser": "pegjs --export-var postParser --format globals -o ./explorer/post-parser.js ./src/post.pegjs",
     "build:explorer-elm": "elm-make explorer/Explorer.elm --output explorer/explorer.js",
-    "build:explorer": "npm run build:explorer-parser && npm run build:explorer-elm",
+    "build:explorer": "npm run build:explorer-parser && npm run build:css && npm run build:explorer-elm",
+    "start": "chokidar '**/*.elm' -c 'npm run build:explorer'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -19,6 +21,7 @@
   "author": "Dennis Snell <dennis.snell@automattic.com>",
   "license": "ISC",
   "devDependencies": {
+    "elm-css": "^0.6.0",
     "pegjs": "0.10.0"
   }
 }

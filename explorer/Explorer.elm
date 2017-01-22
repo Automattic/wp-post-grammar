@@ -1,9 +1,10 @@
 port module Explorer exposing (..)
 
 import Html exposing (code, div, pre, text, textarea)
-import Html.Attributes exposing (class, style)
+import Html.Attributes exposing (style)
 import Html.Attributes.Extra exposing (innerHtml)
 import Html.Events exposing (onInput)
+import Style exposing (class, CssClasses(..))
 
 
 port submitPost : String -> Cmd msg
@@ -58,32 +59,26 @@ statusMessage : ParseStatus -> Html.Html Msg
 statusMessage status =
     case status of
         ParseGood ->
-            div [ style [ ( "color", "green" ) ] ] [ text "Complete parse" ]
+            div [ class [ ParseGood ] ] [ text "Complete parse" ]
 
         ParseBad ->
-            div [ style [ ( "color", "red" ) ] ] [ text "No valid parse" ]
+            div [ class [ ParseBad ] ] [ text "No valid parse" ]
 
 
-highlightClass : ParseStatus -> String
+highlightClass : ParseStatus -> List CssClasses
 highlightClass status =
     case status of
         ParseGood ->
-            ""
+            []
 
         ParseBad ->
-            "nohighlight"
+            [ NoHighlight ]
 
 
 view : Model -> Html.Html Msg
 view { input, parse, status } =
     div
-        [ style
-            [ ( "display", "flex" )
-            , ( "flex-direction", "row" )
-            , ( "font-family", "monospace" )
-            , ( "font-size", "16px" )
-            ]
-        ]
+        [ class [ Layout ] ]
         [ div
             [ style
                 [ ( "flex", "1 0 0" )
@@ -91,13 +86,7 @@ view { input, parse, status } =
                 ]
             ]
             [ textarea
-                [ style
-                    [ ( "width", "95%" )
-                    , ( "height", "100%" )
-                    , ( "padding", "1em" )
-                    , ( "font-family", "monospace" )
-                    , ( "font-size", "16px" )
-                    ]
+                [ class [ InputPane ]
                 , onInput UpdateInput
                 ]
                 [ text input ]
@@ -109,10 +98,11 @@ view { input, parse, status } =
             ]
             [ div [] [ statusMessage status ]
             , pre
-                [ class <| highlightClass status
-                , style
-                    [ ( "padding", "1em" )
-                    ]
+                [ highlightClass status
+                    |> List.append
+                        [ OutputPane
+                        ]
+                    |> class
                 ]
                 [ code [ innerHtml parse ] [] ]
             ]
