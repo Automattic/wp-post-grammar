@@ -6,7 +6,7 @@ WP_Block_List
 
 WP_Block
   = WP_Block_Balanced
-  / WP_Block_Text
+  / WP_Block_Html
 
 WP_Block_Balanced
   = s:WP_Block_Start ts:(!WP_Block_End c:Any { return c })+ e:WP_Block_End
@@ -16,11 +16,11 @@ WP_Block_Balanced
     rawContent: ts.join( '' ),
   } }
 
-WP_Block_Text
+WP_Block_Html
   = ts:(!WP_Block_Balanced c:Any { return c })+
   {
     return {
-      blockType: 'text',
+      blockType: 'html',
       attrs: {},
       rawContent: ts.join('')
     }
@@ -68,12 +68,16 @@ WP_Block_Attribute_Value
 ASCII_AlphaNumeric
   = ASCII_Letter
   / ASCII_Digit
+  / Special_Chars
 
 ASCII_Letter
   = [a-zA-Z]
 
 ASCII_Digit
   = [0-9]
+
+Special_Chars
+  = [\-\_]
 
 Newline
   = [\r\n]
