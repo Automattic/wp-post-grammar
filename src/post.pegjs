@@ -62,13 +62,16 @@ WP_Block_Attribute_Name
   { return [ head ].concat( tail ).join('')  }
 
 WP_Block_Attribute_Value
-  = head:ASCII_Letter tail:ASCII_AlphaNumeric*
+  = head:ASCII_Letter tail:WP_Block_Attribute_Value_Char*
   { return [ head ].concat( tail ).join('') }
 
 ASCII_AlphaNumeric
   = ASCII_Letter
   / ASCII_Digit
   / Special_Chars
+
+WP_Block_Attribute_Value_Char
+  = [^ \t\r\n]
 
 ASCII_Letter
   = [a-zA-Z]
