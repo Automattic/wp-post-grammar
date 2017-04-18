@@ -121,7 +121,7 @@ main =
 
 initialInput : String
 initialInput =
-    """<!-- wp:x y:z -->
+    """<!-- wp:core/text id="a98b469" data='{"version":1.0,"name":"wp-post-grammar","deps":["a","b",{"name":"c","devOnly":true}]}' -->
 Content
 <!-- /wp -->
 
