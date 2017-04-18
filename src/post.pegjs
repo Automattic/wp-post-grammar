@@ -1,3 +1,19 @@
+{
+  function orJSON( text ) {
+    try {
+      return JSON.parse( text );
+    } catch (e) {
+      return text;
+    }
+  }
+
+  function orAsJSON( source ) {
+    return Object.keys( source ).reduce( function( o, key ) {
+      return Object.assign( o, { [ key ]: orJSON( source[ key ] ) } );
+    }, {} );
+  }
+}
+
 Document
   = Token*
   
@@ -23,7 +39,7 @@ WP_Block_Balanced
   { return {
     type: 'WP_Block',
     blockType: s.blockType,
-    attrs: s.attrs,
+    attrs: orAsJSON( s.attrs ),
     startText: s.text,
     endText: e.text,
     rawContent: text(),
@@ -31,7 +47,7 @@ WP_Block_Balanced
   } }
   
 WP_Block_Start
-  = "<!--" __ "wp:" blockType:WP_Block_Type attrs:WP_Block_Attribute_List _? "-->"
+  = "<!--" __ "wp:" blockType:WP_Block_Type attrs:HTML_Attribute_List _? "-->"
   { return {
     type: 'WP_Block_Start',
     blockType,
@@ -47,28 +63,9 @@ WP_Block_End
   } }
 
 WP_Block_Type
-  = head:ASCII_Letter tail:ASCII_AlphaNumeric*
+  = head:ASCII_Letter tail:(ASCII_AlphaNumeric / "/")*
   { return [ head ].concat( tail ).join('')  }
  
-WP_Block_Attribute_List
-  = as:(_+ attr:WP_Block_Attribute { return attr })*
-  { return as.reduce( ( attrs, [ name, value ] ) => Object.assign(
-    attrs,
-    { [ name ]: value }
-  ), {} ) }
-
-WP_Block_Attribute
-  = name:WP_Block_Attribute_Name ":" value:WP_Block_Attribute_Value
-  { return [ name, value ] }
-  
-WP_Block_Attribute_Name
-  = head:ASCII_Letter tail:ASCII_AlphaNumeric*
-  { return [ head ].concat( tail ).join('')  }
-  
-WP_Block_Attribute_Value
-  = head:ASCII_Letter tail:ASCII_AlphaNumeric*
-  { return [ head ].concat( tail ).join('') }
-  
 HTML_Comment
   = "<!--" cs:(!"-->" c:. { return c })* "-->"
   { return {
@@ -78,7 +75,12 @@ HTML_Comment
   } }
   
 HTML_Tag_Balanced
-  = s:HTML_Tag_Open ts:(!HTML_Tag_Close t:Token { return t })+ e:HTML_Tag_Close
+  = s:HTML_Tag_Open
+    ts:(
+      HTML_Tag_Balanced
+    / (!(ct:HTML_Tag_Close & { return s.name === ct.name } ) t:Token { return t }))*
+    e:HTML_Tag_Close
+  & { return s.name === e.name }
   { return {
     type: 'HTML_Tag',
     name: s.name,
@@ -98,7 +100,7 @@ HTML_Tag_Open
   } }
 
 HTML_Tag_Close
-  = "</" name: HTML_Tag_Name _* ">"
+  = "</" name:HTML_Tag_Name _* ">"
   { return {
     type: 'HTML_Tag_Close',
     name,
