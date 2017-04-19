@@ -25,25 +25,22 @@ Token
   / HTML_Tag_Balanced
   / HTML_Tag_Open
   / HTML_Tag_Close
-  / ts:HTML_Text+ 
+  / ts:$(HTML_Text+)
   { return {
     type: 'Text',
-    value: ts.join('') 
+    value: ts
   } }
   
 HTML_Text
   = [^<]
 
 WP_Block_Balanced
-  = s:WP_Block_Start ts:(!WP_Block_End t:Token { return t })+ e:WP_Block_End
+  = s:WP_Block_Start children:(!WP_Block_End t:Token { return t })+ e:WP_Block_End
   { return {
     type: 'WP_Block',
     blockType: s.blockType,
     attrs: orAsJSON( s.attrs ),
-    startText: s.text,
-    endText: e.text,
-    rawContent: text(),
-    children: ts
+    children
   } }
   
 WP_Block_Start
@@ -51,32 +48,28 @@ WP_Block_Start
   { return {
     type: 'WP_Block_Start',
     blockType,
-    attrs,
-    text: text()
+    attrs
   } }
   
 WP_Block_End
   = "<!--" __ "/wp" __ "-->"
   { return {
-    type: 'WP_Block_End',
-    text: text()
+    type: 'WP_Block_End'
   } }
 
 WP_Block_Type
-  = head:ASCII_Letter tail:(ASCII_AlphaNumeric / "/")*
-  { return [ head ].concat( tail ).join('')  }
+  = $(ASCII_Letter (ASCII_AlphaNumeric / "/" ASCII_AlphaNumeric)*)
  
 HTML_Comment
   = "<!--" cs:(!"-->" c:. { return c })* "-->"
   { return {
     type: "HTML_Comment",
-    innerText: cs.join(''),
-    text: text()
+    innerText: cs.join('')
   } }
   
 HTML_Tag_Balanced
   = s:HTML_Tag_Open
-    ts:(
+    children:(
       HTML_Tag_Balanced
     / (!(ct:HTML_Tag_Close & { return s.name === ct.name } ) t:Token { return t }))*
     e:HTML_Tag_Close
@@ -85,9 +78,7 @@ HTML_Tag_Balanced
     type: 'HTML_Tag',
     name: s.name,
     attrs: s.attrs,
-    startText: s.text,
-    endText: e.text,
-    children: ts
+    children
   } }
   
 HTML_Tag_Open
@@ -95,25 +86,18 @@ HTML_Tag_Open
   { return {
     type: 'HTML_Tag_Open',
     name,
-    attrs,
-    text: text()
+    attrs
   } }
 
 HTML_Tag_Close
   = "</" name:HTML_Tag_Name _* ">"
   { return {
     type: 'HTML_Tag_Close',
-    name,
-    text: text()
+    name
   } }
   
 HTML_Tag_Name
-  = cs:HTML_Tag_Name_Character+
-  { return cs.join('') }
-  
-HTML_Tag_Name_Character
-  = ASCII_Letter
-  / ASCII_Digit
+  = $(ASCII_Letter ASCII_AlphaNumeric*)
   
 HTML_Attribute_List
   = as:(_+ a:HTML_Attribute_Item { return a })*
@@ -132,18 +116,17 @@ HTML_Attribute_Empty
   { return [ name, true ] }
   
 HTML_Attribute_Unquoted
-  = name:HTML_Attribute_Name _* "=" _* value:[a-zA-Z0-9]+
-  { return [ name, value.join('') ] }
+  = name:HTML_Attribute_Name _* "=" _* value:$([a-zA-Z0-9]+)
+  { return [ name, value ] }
   
 HTML_Attribute_Quoted
-  = name:HTML_Attribute_Name _* "=" _* '"' value:(!'"' c:. { return c })* '"'
-  { return [ name, value.join('') ] }
-  / name:HTML_Attribute_Name _* "=" _* "'" value:(!"'" c:. { return c })* "'"
-  { return [ name, value.join('') ] }
+  = name:HTML_Attribute_Name _* "=" _* '"' value:$((!'"' .)*) '"'
+  { return [ name, value ] }
+  / name:HTML_Attribute_Name _* "=" _* "'" value:$((!"'" .)*) "'"
+  { return [ name, value ] }
   
 HTML_Attribute_Name
-  = cs:[a-zA-Z0-9:.]+
-  { return cs.join('') }
+  = $([a-zA-Z0-9:.]+)
 
 ASCII_AlphaNumeric
   = ASCII_Letter 
