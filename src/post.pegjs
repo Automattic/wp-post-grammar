@@ -12,10 +12,32 @@
       return Object.assign( o, { [ key ]: orJSON( source[ key ] ) } );
     }, {} );
   }
+
+  function convert( token ) {
+    if ( ! token || ! token.type ) {
+      return token;
+    }
+
+    var children = token.children
+      ? token.children.map( convert )
+      : [];
+
+    switch ( token.type ) {
+      case 'HTML_Tag': return [ [ 'Tag', token.name ], token.attrs, children ];
+      case 'HTML_Tag_Close': return [ [ '-Tag', token.name ] ];
+      case 'HTML_Tag_Open': return [ [ '+Tag', token.name ], token.attrs ];
+      case 'Text': return token.value;
+      case 'WP_Block': return [ [ 'Block', token.blockType ], token.attrs, children ];
+      case 'WP_Block_Open': return [ [ '+Block', token.blockType ], token.attrs ];
+      case 'WP_Block_Close': return [ [ '-Block' ] ];
+      default: return token;
+    }
+  }
 }
 
 Document
-  = Token*
+  = ts:Token*
+  { return ts.map( convert ) }
   
 Token
   = WP_Block_Balanced
