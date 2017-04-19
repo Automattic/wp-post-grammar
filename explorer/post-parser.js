@@ -1810,6 +1810,7 @@
     }
 
 
+      /*! https://mths.be/he v1.1.1 by @mathias | MIT license */
     	// Detect free variables `exports`.
     	var freeExports = typeof exports == 'object' && exports;
 
