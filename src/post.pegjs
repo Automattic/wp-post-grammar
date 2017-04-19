@@ -26,6 +26,7 @@
       case 'HTML_Tag': return [ [ 'Tag', token.name ], token.attrs, children ];
       case 'HTML_Tag_Close': return [ [ '-Tag', token.name ] ];
       case 'HTML_Tag_Open': return [ [ '+Tag', token.name ], token.attrs ];
+      case 'HTML_Void_Tag': return [ [ 'Tag', token.name ], token.attrs ];
       case 'Text': return token.value;
       case 'WP_Block': return [ [ 'Block', token.blockType ], token.attrs, children ];
       case 'WP_Block_Open': return [ [ '+Block', token.blockType ], token.attrs ];
@@ -44,6 +45,7 @@ Token
   / WP_Block_Start
   / WP_Block_End
   / HTML_Comment
+  / HTML_Tag_Void
   / HTML_Tag_Balanced
   / HTML_Tag_Open
   / HTML_Tag_Close
@@ -87,6 +89,22 @@ HTML_Comment
   { return {
     type: "HTML_Comment",
     innerText: cs.join('')
+  } }
+
+HTML_Tag_Void
+  = t:HTML_Tag_Open
+  & { return undefined !== {
+      'br': true,
+      'col': true,
+      'embed': true,
+      'hr': true,
+      'img': true,
+      'input': true
+    }[ t.name.toLowerCase() ] }
+  { return {
+    type: 'HTML_Void_Tag',
+    name: t.name,
+    attrs: t.attrs
   } }
   
 HTML_Tag_Balanced
