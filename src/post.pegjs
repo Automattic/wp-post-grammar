@@ -29,8 +29,8 @@
       case 'HTML_Void_Tag': return [ [ 'Tag', token.name ], token.attrs ];
       case 'Text': return token.value;
       case 'WP_Block': return [ [ 'Block', token.blockType ], token.attrs, children ];
-      case 'WP_Block_Open': return [ [ '+Block', token.blockType ], token.attrs ];
-      case 'WP_Block_Close': return [ [ '-Block' ] ];
+      case 'WP_Block_Start': return [ [ '+Block', token.blockType ], token.attrs ];
+      case 'WP_Block_End': return [ [ '-Block' ] ];
       default: return token;
     }
   }
