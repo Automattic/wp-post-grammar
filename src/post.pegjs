@@ -31,6 +31,8 @@
       case 'WP_Block': return [ [ 'Block', token.blockType ], token.attrs, children ];
       case 'WP_Block_Start': return [ [ '+Block', token.blockType ], token.attrs ];
       case 'WP_Block_End': return [ [ '-Block' ] ];
+      case 'WP_Block__Image': return [ [ 'Block', 'core/image' ], { src: token.src }, convert( token.caption )  || [] ];
+      case 'WP_Block__Quote': return [ [ 'Block', 'core/quote' ], { source: convert( token.source ) }, convert( token.quote ) ];
       default: return token;
     }
   }
@@ -38,10 +40,12 @@
 
 Document
   = ts:Token*
-  { return ts.map( convert ) }
+  { return ts.map( convert ).filter( a => ! /^\s+$/.test( a ) ) }
   
 Token
-  = WP_Block_Balanced
+  = WP_Block__Image
+  / WP_Block__Quote
+  / WP_Block_Balanced
   / WP_Block_Start
   / WP_Block_End
   / HTML_Comment
@@ -57,6 +61,34 @@ Token
   
 HTML_Text
   = [^<]
+
+WP_Block__Image
+  = b:WP_Block_Balanced
+  & { return (
+      b.blockType === 'image' &&
+      b.children.length <=2 &&
+      b.children[ 0 ].type === 'HTML_Void_Tag' &&
+      b.children[ 0 ].name === 'img'
+    ) }
+  { return {
+    type: 'WP_Block__Image',
+    src: b.children[ 0 ].attrs.src,
+    caption: b.children[ 1 ]
+  } }
+
+WP_Block__Quote
+  = b:WP_Block_Balanced
+  & { return (
+      b.blockType === 'quote' &&
+      b.children.length === 2 &&
+      b.children[ 1 ].type === 'HTML_Tag' &&
+      b.children[ 1 ].name.toLowerCase() === 'cite'
+    ) }
+  { return {
+    type: 'WP_Block__Quote',
+    quote: b.children[ 0 ],
+    source: b.children[ 1 ].children[ 0 ]
+  } }
 
 WP_Block_Balanced
   = s:WP_Block_Start children:(!WP_Block_End t:Token { return t })+ e:WP_Block_End
