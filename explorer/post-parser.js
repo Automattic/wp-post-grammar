@@ -152,6 +152,7 @@
             type: 'WP_Block',
             blockType: s.blockType,
             attrs: orAsJSON( s.attrs ),
+            rawContent: text(),
             children
           } },
         peg$c5 = "<!--",

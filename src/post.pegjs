@@ -41,6 +41,7 @@ WP_Block_Balanced
     type: 'WP_Block',
     blockType: s.blockType,
     attrs: orAsJSON( s.attrs ),
+    rawContent: text(),
     children
   } }
   
